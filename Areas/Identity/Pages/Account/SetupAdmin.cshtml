@@ -1,0 +1,13 @@
+@page
+@model ProofTrail.Areas.Identity.Pages.Account.SetupAdminModel
+@{ ViewData["Title"] = "Admin setup"; }
+<div class="auth-wrap"><div class="panel"><h3 class="mb-3">Create the Admin account</h3>
+<p class="small text-muted">One-time setup. This page closes automatically once an Admin exists.</p>
+<form method="post">
+<div asp-validation-summary="All" class="text-danger" role="alert"></div>
+<div class="mb-3"><label asp-for="Input.FullName" class="form-label"></label><input asp-for="Input.FullName" class="form-control" autocomplete="name" /></div>
+<div class="mb-3"><label asp-for="Input.Email" class="form-label"></label><input asp-for="Input.Email" class="form-control" autocomplete="username" /></div>
+<div class="mb-3"><label asp-for="Input.Password" class="form-label"></label><input asp-for="Input.Password" class="form-control" autocomplete="new-password" /><div class="form-text">At least 8 characters, including uppercase, lowercase, a number and a symbol.</div></div>
+<div class="mb-3"><label asp-for="Input.ConfirmPassword" class="form-label"></label><input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" /></div>
+<button class="btn btn-seal w-100" type="submit">Create Admin</button></form>
+</div></div>

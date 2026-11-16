@@ -1,0 +1,30 @@
+@model Institution
+@{ ViewData["Title"] = "Issuer dashboard"; }
+<h3 class="mb-3">Issuer dashboard</h3>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3"><div class="stat"><div class="n">0</div><div class="small text-muted">Credentials issued</div></div></div>
+    <div class="col-6 col-md-3"><div class="stat"><div class="n">0</div><div class="small text-muted">Revoked</div></div></div>
+    <div class="col-6 col-md-3"><div class="stat"><div class="n n-sm">@Model.AppliedAt.ToString("dd MMM yyyy")</div><div class="small text-muted">Registered (UTC)</div></div></div>
+    <div class="col-6 col-md-3"><div class="stat"><div class="n n-sm">Active</div><div class="small text-muted">Account</div></div></div>
+</div>
+
+<div class="panel mb-4">
+    <h5 class="mb-3">@Model.Name</h5>
+    <dl class="row mb-0">
+        <dt class="col-sm-4">Registration number</dt><dd class="col-sm-8">@Model.RegistrationNumber</dd>
+        <dt class="col-sm-4">Registered (UTC)</dt><dd class="col-sm-8">@Model.AppliedAt.ToString("dd MMM yyyy")</dd>
+    </dl>
+</div>
+
+<div class="panel">
+    <h5 class="mb-3">Recent credentials</h5>
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead><tr><th>Credential ID</th><th>Student</th><th>Degree</th><th>Status</th></tr></thead>
+            <tbody>
+                <tr><td colspan="4" class="text-muted">No credentials issued yet. Credential issuing will be added in a later phase.</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>

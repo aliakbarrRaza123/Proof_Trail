@@ -126,8 +126,17 @@ h1, h2, h3, h4, h5 {
     color: var(--ink)
 }
 
+.stat .n.n-sm {
+    font-size: 1.25rem;
+}
+
 footer {
     color: #667;
     font-size: .85rem;
     padding: 24px 0
 }
+
+.auth-wrap { padding: 0 12px; }
+.validation-summary-valid { display: none; }
+.input-validation-error { border-color: var(--bad); }
+@media (max-width: 767px) { .side { min-height: auto; } .hero { padding: 40px 0; } }

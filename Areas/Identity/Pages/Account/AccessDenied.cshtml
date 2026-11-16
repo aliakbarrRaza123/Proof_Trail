@@ -1,0 +1,3 @@
+@page
+@{ ViewData["Title"] = "Access denied"; Response.StatusCode = 403; }
+<div class="container py-5"><h2>Access denied</h2><p>Your account does not have access to this page.</p><a asp-area="" asp-controller="Home" asp-action="Dashboard" class="btn btn-seal">My dashboard</a></div>

@@ -1,0 +1,6 @@
+@model List<ApplicationUser>
+@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@{ ViewData["Title"] = "Users"; }
+<h3>Registered users</h3><div class="panel table-responsive"><table class="table"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Joined (UTC)</th></tr></thead><tbody>
+@foreach (var u in Model) { <tr><td>@u.FullName</td><td>@u.Email</td><td>@string.Join(", ", await UserManager.GetRolesAsync(u))</td><td>@u.CreatedAt.ToString("dd MMM yyyy")</td></tr> }
+</tbody></table></div>

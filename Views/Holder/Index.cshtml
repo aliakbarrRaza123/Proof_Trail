@@ -1,0 +1,27 @@
+@model ApplicationUser
+@{ ViewData["Title"] = "Holder dashboard"; }
+<h3 class="mb-3">Welcome, @Model.FullName</h3>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3"><div class="stat"><div class="n">0</div><div class="small text-muted">Credentials</div></div></div>
+    <div class="col-6 col-md-3"><div class="stat"><div class="n">0</div><div class="small text-muted">Shared links</div></div></div>
+    <div class="col-6 col-md-3"><div class="stat"><div class="n n-sm">@Model.CreatedAt.ToString("dd MMM yyyy")</div><div class="small text-muted">Joined (UTC)</div></div></div>
+    <div class="col-6 col-md-3"><div class="stat"><div class="n n-sm">Holder</div><div class="small text-muted">Account type</div></div></div>
+</div>
+
+<div class="panel mb-4">
+    <h5 class="mb-3">My account</h5>
+    <partial name="_AccountDetails" model="Model" />
+</div>
+
+<div class="panel">
+    <h5 class="mb-3">My certificates</h5>
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead><tr><th>Credential ID</th><th>Title</th><th>Issuer</th><th>Status</th></tr></thead>
+            <tbody>
+                <tr><td colspan="4" class="text-muted">No credentials yet. Certificates will appear here once issuing is added.</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>

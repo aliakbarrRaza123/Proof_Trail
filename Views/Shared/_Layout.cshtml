@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>@ViewData["Title"] | ProofTrail</title>
+<link rel="stylesheet" href="~/lib/bootstrap/bootstrap.min.css" />
+<link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+</head><body>
+<nav class="navbar navbar-expand-md" data-bs-theme="dark"><div class="container">
+<a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">ProofTrail</a>
+<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+<div class="collapse navbar-collapse" id="mainNav"><ul class="navbar-nav ms-auto align-items-md-center">
+<li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+<li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Verify" asp-action="Index">Verify a Credential</a></li>
+<partial name="_LoginPartial" />
+</ul></div></div></nav>
+@if (TempData["Success"] is string success) { <div class="container mt-3"><div class="alert alert-success" role="status">@success</div></div> }
+@if (TempData["Error"] is string error) { <div class="container mt-3"><div class="alert alert-danger" role="alert">@error</div></div> }
+@RenderBody()
+<footer class="container text-center">ProofTrail - Digital Credential and Skill Verification Platform.</footer>
+<script src="~/lib/bootstrap/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body></html>

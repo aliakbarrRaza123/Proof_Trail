@@ -1,0 +1,36 @@
+@model AdminViewModel
+@{ ViewData["Title"] = "Admin dashboard"; }
+<h3 class="mb-3">Admin dashboard</h3>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3"><div class="stat"><div class="n">@Model.Institutions.Count</div><div class="small text-muted">Institutions</div></div></div>
+    <div class="col-6 col-md-3"><div class="stat"><div class="n">@Model.HolderCount</div><div class="small text-muted">Students (Holders)</div></div></div>
+    <div class="col-6 col-md-3"><div class="stat"><div class="n">@Model.UserCount</div><div class="small text-muted">Registered users</div></div></div>
+    <div class="col-6 col-md-3"><div class="stat"><div class="n">@Model.NewTodayCount</div><div class="small text-muted">New today</div></div></div>
+</div>
+
+<div class="panel">
+    <h5 class="mb-3">Registered institutions</h5>
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead>
+                <tr><th>Institution</th><th>Registration number</th><th>Email</th><th>Registered (UTC)</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var institution in Model.Institutions)
+                {
+                    <tr>
+                        <td>@institution.Name</td>
+                        <td>@institution.RegistrationNumber</td>
+                        <td>@institution.User.Email</td>
+                        <td>@institution.AppliedAt.ToString("dd MMM yyyy")</td>
+                    </tr>
+                }
+                @if (Model.Institutions.Count == 0)
+                {
+                    <tr><td colspan="4">No institutions registered yet.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
