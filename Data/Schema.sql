@@ -1,5 +1,5 @@
 -- Initial SQL Server schema. Executed transactionally by DatabaseSetup, without EF migrations.
--- Future schema edits must be applied using an explicit ALTER TABLE script.
+-- Additive upgrades below also run against existing ProofTrail databases.
 IF OBJECT_ID(N'dbo.__EFMigrationsHistory', N'U') IS NOT NULL
     THROW 50001, 'This database belongs to an EF version. Choose a new database name; do not overwrite it.', 1;
 
@@ -54,3 +54,22 @@ IF OBJECT_ID(N'dbo.Institutions', N'U') IS NULL
     );
 
 -- Existing credential tables/data from older versions are deliberately left untouched.
+
+IF COL_LENGTH(N'dbo.AspNetUsers', N'RollNumber') IS NULL
+    ALTER TABLE dbo.AspNetUsers ADD RollNumber nvarchar(40) NULL;
+
+IF COL_LENGTH(N'dbo.Institutions', N'OfficialWebsite') IS NULL
+    ALTER TABLE dbo.Institutions ADD OfficialWebsite nvarchar(256) NULL;
+
+IF OBJECT_ID(N'dbo.IssuedCredentials', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.IssuedCredentials (
+        Id uniqueidentifier NOT NULL PRIMARY KEY,
+        InstitutionId int NOT NULL REFERENCES dbo.Institutions(Id),
+        HolderUserId nvarchar(128) NOT NULL REFERENCES dbo.AspNetUsers(Id),
+        Title nvarchar(160) NOT NULL,
+        IssuedAt datetime2 NOT NULL DEFAULT SYSUTCDATETIME()
+    );
+    CREATE INDEX IX_IssuedCredentials_HolderUserId ON dbo.IssuedCredentials(HolderUserId, IssuedAt);
+    CREATE INDEX IX_IssuedCredentials_InstitutionId ON dbo.IssuedCredentials(InstitutionId, IssuedAt);
+END;

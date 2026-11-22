@@ -6,6 +6,7 @@ public class Institution
     public int Id { get; set; }
     [MaxLength(120)] public string Name { get; set; } = "";
     [MaxLength(80)] public string RegistrationNumber { get; set; } = "";
+    [MaxLength(256)] public string? OfficialWebsite { get; set; }
     public string UserId { get; set; } = "";
     public ApplicationUser User { get; set; } = null!;
     public ApprovalStatus Status { get; set; } = ApprovalStatus.Pending;

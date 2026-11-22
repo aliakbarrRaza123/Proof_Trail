@@ -1,29 +1,73 @@
-@model Institution
+@model IssuerDashboardViewModel
 @{ ViewData["Title"] = "Issuer dashboard"; }
 <h3 class="mb-3">Issuer dashboard</h3>
 
 <div class="row g-3 mb-4">
-    <div class="col-6 col-md-3"><div class="stat"><div class="n">0</div><div class="small text-muted">Credentials issued</div></div></div>
-    <div class="col-6 col-md-3"><div class="stat"><div class="n">0</div><div class="small text-muted">Revoked</div></div></div>
-    <div class="col-6 col-md-3"><div class="stat"><div class="n n-sm">@Model.AppliedAt.ToString("dd MMM yyyy")</div><div class="small text-muted">Registered (UTC)</div></div></div>
-    <div class="col-6 col-md-3"><div class="stat"><div class="n n-sm">Active</div><div class="small text-muted">Account</div></div></div>
+    <div class="col-6 col-md-3"><div class="stat"><div class="n">@Model.Credentials.Count</div><div class="small text-muted">Credentials issued</div></div></div>
+    <div class="col-6 col-md-3"><div class="stat"><div class="n n-sm">@Model.Institution.AppliedAt.ToString("dd MMM yyyy")</div><div class="small text-muted">Registered (UTC)</div></div></div>
+    <div class="col-6 col-md-3"><div class="stat"><div class="n n-sm">@Model.Institution.Status</div><div class="small text-muted">Institution status</div></div></div>
 </div>
 
 <div class="panel mb-4">
-    <h5 class="mb-3">@Model.Name</h5>
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+        <h5 class="mb-0">@Model.Institution.Name</h5>
+        <a asp-action="Edit" class="btn btn-outline-secondary btn-sm">Edit Profile</a>
+    </div>
     <dl class="row mb-0">
-        <dt class="col-sm-4">Registration number</dt><dd class="col-sm-8">@Model.RegistrationNumber</dd>
-        <dt class="col-sm-4">Registered (UTC)</dt><dd class="col-sm-8">@Model.AppliedAt.ToString("dd MMM yyyy")</dd>
+        <dt class="col-sm-4">Registration number</dt><dd class="col-sm-8">@Model.Institution.RegistrationNumber</dd>
+        <dt class="col-sm-4">Official website</dt><dd class="col-sm-8">@(Model.Institution.OfficialWebsite ?? "—")</dd>
+        <dt class="col-sm-4">Registered (UTC)</dt><dd class="col-sm-8">@Model.Institution.AppliedAt.ToString("dd MMM yyyy")</dd>
     </dl>
 </div>
 
+@if (Model.Institution.Status == ApprovalStatus.Approved)
+{
+    <div class="panel mb-4">
+        <h5 class="mb-3">Issue a credential</h5>
+        <form asp-action="Issue" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            <div class="mb-3">
+                <label asp-for="Issue.HolderEmail" class="form-label"></label>
+                <input asp-for="Issue.HolderEmail" class="form-control" maxlength="256" required />
+                <span asp-validation-for="Issue.HolderEmail" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Issue.Title" class="form-label"></label>
+                <input asp-for="Issue.Title" class="form-control" maxlength="160" required />
+                <span asp-validation-for="Issue.Title" class="text-danger"></span>
+            </div>
+            <button class="btn btn-seal" type="submit">Issue credential</button>
+        </form>
+    </div>
+}
+else if (Model.Institution.Status == ApprovalStatus.Pending)
+{
+    <p class="alert alert-info">An Admin must approve your institution before you can issue credentials.</p>
+}
+else
+{
+    <p class="alert alert-warning">This application was rejected. Issuing is unavailable.</p>
+}
+
 <div class="panel">
-    <h5 class="mb-3">Recent credentials</h5>
+    <h5 class="mb-3">Issued credentials</h5>
     <div class="table-responsive">
         <table class="table align-middle">
-            <thead><tr><th>Credential ID</th><th>Student</th><th>Degree</th><th>Status</th></tr></thead>
+            <thead><tr><th>Credential ID</th><th>Student</th><th>Title</th><th>Issued (UTC)</th></tr></thead>
             <tbody>
-                <tr><td colspan="4" class="text-muted">No credentials issued yet. Credential issuing will be added in a later phase.</td></tr>
+                @foreach (var credential in Model.Credentials)
+                {
+                    <tr>
+                        <td><a asp-controller="Verify" asp-action="Index" asp-route-id="@credential.Id">@credential.Id</a></td>
+                        <td>@credential.HolderName</td>
+                        <td>@credential.Title</td>
+                        <td>@credential.IssuedAt.ToString("dd MMM yyyy")</td>
+                    </tr>
+                }
+                @if (Model.Credentials.Count == 0)
+                {
+                    <tr><td colspan="4" class="text-muted">No credentials issued yet.</td></tr>
+                }
             </tbody>
         </table>
     </div>

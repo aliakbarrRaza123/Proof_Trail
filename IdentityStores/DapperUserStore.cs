@@ -13,7 +13,7 @@ public sealed class DapperUserStore(SqlDatabase database) :
     IUserLockoutStore<ApplicationUser>
 {
     private readonly IdentityErrorDescriber _errors = new();
-    private static readonly string Columns = "Id, UserName, NormalizedUserName, Email, NormalizedEmail, EmailConfirmed, PasswordHash, SecurityStamp, ConcurrencyStamp, PhoneNumber, PhoneNumberConfirmed, TwoFactorEnabled, LockoutEnd, LockoutEnabled, AccessFailedCount, FullName, CreatedAt";
+    private static readonly string Columns = "Id, UserName, NormalizedUserName, Email, NormalizedEmail, EmailConfirmed, PasswordHash, SecurityStamp, ConcurrencyStamp, PhoneNumber, PhoneNumberConfirmed, TwoFactorEnabled, LockoutEnd, LockoutEnabled, AccessFailedCount, FullName, CreatedAt, RollNumber";
     public void Dispose() { } // The DI scope owns SqlDatabase.
     private CommandDefinition Command(string sql, object? args, CancellationToken ct) =>
         new(sql, args, database.Transaction, cancellationToken: ct);
@@ -24,7 +24,7 @@ public sealed class DapperUserStore(SqlDatabase database) :
                 INSERT INTO dbo.AspNetUsers ({Columns}) VALUES
                 (@Id, @UserName, @NormalizedUserName, @Email, @NormalizedEmail, @EmailConfirmed,
                  @PasswordHash, @SecurityStamp, @ConcurrencyStamp, @PhoneNumber, @PhoneNumberConfirmed,
-                 @TwoFactorEnabled, @LockoutEnd, @LockoutEnabled, @AccessFailedCount, @FullName, @CreatedAt)
+                 @TwoFactorEnabled, @LockoutEnd, @LockoutEnabled, @AccessFailedCount, @FullName, @CreatedAt, @RollNumber)
                 """, user, ct));
             return IdentityResult.Success;
         }
@@ -45,7 +45,7 @@ public sealed class DapperUserStore(SqlDatabase database) :
                     PasswordHash=@PasswordHash, SecurityStamp=@SecurityStamp, ConcurrencyStamp=@NewStamp,
                     PhoneNumber=@PhoneNumber, PhoneNumberConfirmed=@PhoneNumberConfirmed,
                     TwoFactorEnabled=@TwoFactorEnabled, LockoutEnd=@LockoutEnd, LockoutEnabled=@LockoutEnabled,
-                    AccessFailedCount=@AccessFailedCount, FullName=@FullName
+                    AccessFailedCount=@AccessFailedCount, FullName=@FullName, RollNumber=@RollNumber
                 WHERE Id=@Id AND (ConcurrencyStamp=@OldStamp OR (ConcurrencyStamp IS NULL AND @OldStamp IS NULL))
                 """, args, ct));
             if (count != 1) return IdentityResult.Failed(_errors.ConcurrencyFailure());

@@ -1,7 +1,21 @@
-// Show institution registration fields only for Issuer sign-up.
 const role = document.getElementById('account-role');
 if (role) {
-    const update = () => { document.getElementById('institution-fields').hidden = role.value !== 'Issuer'; };
-    role.addEventListener('change', update);
-    update();
+    const holderFields = document.getElementById('holder-fields');
+    const institutionFields = document.getElementById('institution-fields');
+
+    function showFields(group, visible) {
+        group.hidden = !visible;
+        group.querySelectorAll('input').forEach(input => {
+            input.disabled = !visible;
+            input.required = visible;
+        });
+    }
+
+    function updateFields() {
+        showFields(holderFields, role.value === 'Holder');
+        showFields(institutionFields, role.value === 'Issuer');
+    }
+
+    role.addEventListener('change', updateFields);
+    updateFields();
 }

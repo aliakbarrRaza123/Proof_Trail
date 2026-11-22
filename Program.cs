@@ -8,6 +8,8 @@ using ProofTrail.Models;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<SqlDatabase>();
 builder.Services.AddScoped<IInstitutionRepository, InstitutionRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ICredentialRepository, CredentialRepository>();
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(o => {
     o.User.RequireUniqueEmail = true;
     o.Password.RequiredLength = 8;

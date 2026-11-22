@@ -1,7 +1,8 @@
 @page
 @model ProofTrail.Areas.Identity.Pages.Account.LoginModel
 @{ ViewData["Title"] = "Log in"; }
-<div class="auth-wrap"><div class="panel"><h3 class="mb-3">Log in</h3>
+<div class="auth-wrap"><div class="panel"><partial name="_BackLink" />
+    <h3 class="mb-3">Log in</h3>
 @if (Model.AdminSetupRequired) {
 <div class="alert alert-info small">No Admin account exists yet. <a asp-page="SetupAdmin">Create the Admin account</a> (opens only on the computer running the app).</div>
 }

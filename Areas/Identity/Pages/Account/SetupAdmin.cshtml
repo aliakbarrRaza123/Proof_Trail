@@ -1,7 +1,8 @@
 @page
 @model ProofTrail.Areas.Identity.Pages.Account.SetupAdminModel
 @{ ViewData["Title"] = "Admin setup"; }
-<div class="auth-wrap"><div class="panel"><h3 class="mb-3">Create the Admin account</h3>
+<div class="auth-wrap"><div class="panel"><partial name="_BackLink" />
+    <h3 class="mb-3">Create the Admin account</h3>
 <p class="small text-muted">One-time setup. This page closes automatically once an Admin exists.</p>
 <form method="post">
 <div asp-validation-summary="All" class="text-danger" role="alert"></div>

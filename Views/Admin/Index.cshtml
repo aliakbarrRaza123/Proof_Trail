@@ -11,10 +11,11 @@
 
 <div class="panel">
     <h5 class="mb-3">Registered institutions</h5>
+    <p id="decision-message" class="text-danger" role="status" hidden></p>
     <div class="table-responsive">
         <table class="table align-middle">
             <thead>
-                <tr><th>Institution</th><th>Registration number</th><th>Email</th><th>Registered (UTC)</th></tr>
+                <tr><th>Institution</th><th>Registration number</th><th>Email</th><th>Registered (UTC)</th><th>Status</th><th>Decision</th></tr>
             </thead>
             <tbody>
                 @foreach (var institution in Model.Institutions)
@@ -24,13 +25,29 @@
                         <td>@institution.RegistrationNumber</td>
                         <td>@institution.User.Email</td>
                         <td>@institution.AppliedAt.ToString("dd MMM yyyy")</td>
+                        <td class="institution-status">@institution.Status</td>
+                        <td>
+                            @if (institution.Status == ApprovalStatus.Pending)
+                            {
+                                <form asp-action="DecideInstitution" method="post" class="institution-decision d-flex gap-2">
+                                    <input type="hidden" name="id" value="@institution.Id" />
+                                    <button type="submit" name="status" value="Approved" class="btn btn-sm btn-outline-success">Approve</button>
+                                    <button type="submit" name="status" value="Rejected" class="btn btn-sm btn-outline-danger">Reject</button>
+                                </form>
+                            }
+                        </td>
                     </tr>
                 }
                 @if (Model.Institutions.Count == 0)
                 {
-                    <tr><td colspan="4">No institutions registered yet.</td></tr>
+                    <tr><td colspan="6">No institutions registered yet.</td></tr>
                 }
             </tbody>
         </table>
     </div>
 </div>
+
+@section Scripts {
+    <script src="~/lib/jquery/jquery.min.js" asp-append-version="true"></script>
+    <script src="~/js/institution-decisions.js" asp-append-version="true"></script>
+}

@@ -16,6 +16,8 @@ public class RegisterModel(UserManager<ApplicationUser> users, SqlDatabase datab
         [Required, RegularExpression("^(Holder|Issuer)$")] public string Role { get; set; } = Roles.Holder;
         [Required, StringLength(120), Display(Name="Full name / Institution name")] public string FullName { get; set; } = "";
         [Required, EmailAddress, StringLength(256)] public string Email { get; set; } = "";
+        [StringLength(40), Display(Name = "Student roll number")] public string? RollNumber { get; set; }
+        [StringLength(256), Display(Name = "Official website")] public string? OfficialWebsite { get; set; }
         [StringLength(80), Display(Name="Registration / HEC number")] public string? RegistrationNumber { get; set; }
         [Required, StringLength(100, MinimumLength=8), DataType(DataType.Password)] public string Password { get; set; } = "";
         [Required, DataType(DataType.Password), Compare(nameof(Password)), Display(Name="Confirm password")] public string ConfirmPassword { get; set; } = "";
@@ -24,7 +26,15 @@ public class RegisterModel(UserManager<ApplicationUser> users, SqlDatabase datab
     public async Task<IActionResult> OnPostAsync() {
         if (User.Identity?.IsAuthenticated == true) return RedirectToAction("Dashboard", "Home", new { area = "" });
         Input.RegistrationNumber = Input.RegistrationNumber?.Trim().ToUpperInvariant();
+        Input.RollNumber = Input.RollNumber?.Trim();
+        Input.OfficialWebsite = Input.OfficialWebsite?.Trim();
+        if (Input.Role == Roles.Holder && string.IsNullOrWhiteSpace(Input.RollNumber))
+            ModelState.AddModelError("Input.RollNumber", "Student roll number is required.");
         if (Input.Role == Roles.Issuer) {
+            if (!Uri.TryCreate(Input.OfficialWebsite, UriKind.Absolute, out var website)
+                || (website.Scheme != Uri.UriSchemeHttp && website.Scheme != Uri.UriSchemeHttps)
+                || string.IsNullOrWhiteSpace(website.Host))
+                ModelState.AddModelError("Input.OfficialWebsite", "Enter an official website starting with https:// or http://.");
             if (string.IsNullOrWhiteSpace(Input.RegistrationNumber)) ModelState.AddModelError("Input.RegistrationNumber", "Registration number is required for an institution.");
             else if (await institutions.RegistrationExistsAsync(Input.RegistrationNumber)) ModelState.AddModelError("Input.RegistrationNumber", "This institution registration number is already registered.");
         }
@@ -32,12 +42,15 @@ public class RegisterModel(UserManager<ApplicationUser> users, SqlDatabase datab
         await database.BeginAsync();
         try {
         var email = Input.Email.Trim();
-        var user = new ApplicationUser { UserName = email, Email = email, FullName = Input.FullName.Trim() };
+        var user = new ApplicationUser {
+            UserName = email, Email = email, FullName = Input.FullName.Trim(),
+            RollNumber = Input.Role == Roles.Holder ? Input.RollNumber : null
+        };
         var result = await users.CreateAsync(user, Input.Password);
         if (!result.Succeeded) { foreach (var e in result.Errors) ModelState.AddModelError("", e.Description); return Page(); }
         var roleResult = await users.AddToRoleAsync(user, Input.Role);
         if (!roleResult.Succeeded) { foreach (var e in roleResult.Errors) ModelState.AddModelError("", e.Description); return Page(); }
-        if (Input.Role == Roles.Issuer) await institutions.AddAsync(new() { Name = user.FullName, RegistrationNumber = Input.RegistrationNumber!, UserId = user.Id });
+        if (Input.Role == Roles.Issuer) await institutions.AddAsync(new() { Name = user.FullName, RegistrationNumber = Input.RegistrationNumber!, OfficialWebsite = Input.OfficialWebsite, UserId = user.Id });
         await database.CommitAsync();
         TempData["Success"] = Input.Role == Roles.Issuer ? "Institution account created. Log in to view your saved institution details." : "Account created. You can now log in.";
         return RedirectToPage("Login");

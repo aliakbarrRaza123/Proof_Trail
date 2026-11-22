@@ -12,5 +12,7 @@
 }
 <a class="nav-link" asp-controller="Profile" asp-action="Index">Profile</a>
 <form asp-area="Identity" asp-page="/Account/Logout" method="post"><button type="submit" class="nav-link btn btn-link">Log out</button></form>
-</nav></aside><main class="col-md-10 p-4">@RenderBody()</main></div></div>
+</nav></aside><main class="col-md-10 p-4">
+<partial name="_BackLink" />
+@RenderBody()</main></div></div>
 @section Scripts { @await RenderSectionAsync("Scripts", required: false) }

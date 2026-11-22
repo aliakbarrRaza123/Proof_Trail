@@ -2,5 +2,9 @@
 <dl class="row mb-0">
 <dt class="col-sm-4">Name</dt><dd class="col-sm-8">@Model.FullName</dd>
 <dt class="col-sm-4">Email</dt><dd class="col-sm-8">@Model.Email</dd>
+@if (User.IsInRole("Holder"))
+{
+    <dt class="col-sm-4">Roll number</dt><dd class="col-sm-8">@(Model.RollNumber ?? "—")</dd>
+}
 <dt class="col-sm-4">Joined (UTC)</dt><dd class="col-sm-8">@Model.CreatedAt.ToString("dd MMM yyyy")</dd>
 </dl>

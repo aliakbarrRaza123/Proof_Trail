@@ -1,0 +1,17 @@
+@model VerifyCredentialViewModel
+@if (Model.Credential is { } credential)
+{
+    <div class="alert alert-info mt-3 mb-0">
+        <strong>Issuance record found</strong>
+        <dl class="row mb-0 mt-2">
+            <dt class="col-sm-4">Credential ID</dt><dd class="col-sm-8 text-break">@credential.Id</dd>
+            <dt class="col-sm-4">Title</dt><dd class="col-sm-8">@credential.Title</dd>
+            <dt class="col-sm-4">Institution</dt><dd class="col-sm-8">@credential.InstitutionName</dd>
+            <dt class="col-sm-4">Issued (UTC)</dt><dd class="col-sm-8">@credential.IssuedAt.ToString("dd MMM yyyy")</dd>
+        </dl>
+    </div>
+}
+else if (Model.Message is not null)
+{
+    <p class="alert alert-warning mt-3 mb-0">@Model.Message</p>
+}

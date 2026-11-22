@@ -1,57 +1,29 @@
-@{
-    ViewData["Title"] = "Verify a credential";
-    var submitted = ViewData["CredentialId"] as string;
-}
+@model VerifyCredentialViewModel
+@{ ViewData["Title"] = "Verify a credential"; }
 <div class="container py-5" style="max-width:760px">
-
+    <partial name="_BackLink" />
     <h2>Verify a credential</h2>
-    <p>Enter the credential ID printed on the certificate, or scan its QR code. No login needed.</p>
-
-    <div class="panel mb-4">
-
-        <form method="get" asp-controller="Verify" asp-action="Index">
+    <p>Enter a credential ID to look up its issuance record. No login needed.</p>
+    <div class="panel">
+        <form id="credential-lookup" method="get" asp-action="Index" asp-route-id=""
+              data-lookup-url="@Url.Action("Lookup", "Verify", new { id = "" })">
             <label class="form-label" for="id">Credential ID</label>
             <div class="row g-2">
                 <div class="col-sm-9">
-                    <input id="id" name="id" class="form-control" placeholder="e.g. PT-2026-000123" value="@submitted" maxlength="50" />
+                    <input id="id" name="id" class="form-control" value="@Model.Id" maxlength="36" required />
                 </div>
                 <div class="col-sm-3">
                     <button class="btn btn-seal w-100" type="submit">Verify</button>
                 </div>
             </div>
         </form>
-
-        @if (!string.IsNullOrEmpty(submitted))
-        {
-            <div class="alert alert-info mt-3 mb-0" role="status">
-                Credential verification is not available in this version, so <strong>@submitted</strong> could not be checked.
-                It will be added in a later phase.
-            </div>
-        }
-
-    </div>
-
-    <h5>Sample results</h5>
-
-    <div class="row g-3">
-        <div class="col-md-4">
-            <div class="panel" style="border-color:var(--seal)">
-                <strong style="color:var(--seal)">Valid</strong>
-                <div class="small">Signature and ledger chain match.</div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="panel" style="border-color:var(--amber)">
-                <strong style="color:var(--amber)">Revoked</strong>
-                <div class="small">The issuer withdrew this credential.</div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="panel" style="border-color:var(--bad)">
-                <strong style="color:var(--bad)">Tampered</strong>
-                <div class="small">The record does not match its hash.</div>
-            </div>
+        <div id="credential-result" aria-live="polite">
+            <partial name="_LookupResult" model="Model" />
         </div>
     </div>
-
 </div>
+
+@section Scripts {
+    <script src="~/lib/jquery/jquery.min.js" asp-append-version="true"></script>
+    <script src="~/js/credential-lookup.js" asp-append-version="true"></script>
+}

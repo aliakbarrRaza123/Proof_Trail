@@ -1,6 +1,21 @@
-@model List<ApplicationUser>
-@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
+@model List<AdminUserRow>
 @{ ViewData["Title"] = "Users"; }
-<h3>Registered users</h3><div class="panel table-responsive"><table class="table"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Joined (UTC)</th></tr></thead><tbody>
-@foreach (var u in Model) { <tr><td>@u.FullName</td><td>@u.Email</td><td>@string.Join(", ", await UserManager.GetRolesAsync(u))</td><td>@u.CreatedAt.ToString("dd MMM yyyy")</td></tr> }
-</tbody></table></div>
+
+<h3 class="mb-3">Registered users</h3>
+<form id="users-search" class="mb-3" method="get" asp-action="Users"
+      data-search-url="@Url.Action("SearchUsers", "Admin")">
+    <label class="form-label" for="search">Search by name or email</label>
+    <div class="input-group">
+        <input class="form-control" id="search" name="search" type="search" value="@ViewData["Search"]" maxlength="256" />
+        <button class="btn btn-seal" type="submit">Search</button>
+    </div>
+</form>
+<p id="users-search-message" class="text-danger" role="status" hidden></p>
+<div id="users-results" aria-live="polite">
+    <partial name="_UsersTable" model="Model" />
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery/jquery.min.js" asp-append-version="true"></script>
+    <script src="~/js/admin-users.js" asp-append-version="true"></script>
+}

@@ -1,0 +1,32 @@
+@{
+    var route = ViewContext.ActionDescriptor.RouteValues;
+    route.TryGetValue("controller", out var controller);
+    route.TryGetValue("action", out var action);
+    route.TryGetValue("page", out var page);
+    var signedIn = User.Identity?.IsAuthenticated == true;
+    var credentialId = ViewContext.RouteData.Values["id"] ?? Context.Request.Query["id"].FirstOrDefault();
+
+    (string? url, string label) back = (controller, action, page) switch
+    {
+        ("Home", "Index", _) => (null, ""),
+        ("Admin", "Users", _) => (Url.Action("Index", "Admin", new { area = "" }), "Back to admin overview"),
+        ("Issuer", "Edit", _) => (Url.Action("Index", "Issuer", new { area = "" }), "Back to my institution"),
+        ("Profile", _, _) => (Url.Action("Dashboard", "Home", new { area = "" }), "Back to dashboard"),
+        ("Verify", _, _) when signedIn && credentialId is not null =>
+            (Url.Action("Dashboard", "Home", new { area = "" }), "Back to dashboard"),
+        (_, _, "/Account/SetupAdmin") => (Url.Page("/Account/Login", new { area = "Identity" }), "Back to login"),
+        (_, _, "/Account/AccessDenied") when signedIn =>
+            (Url.Action("Dashboard", "Home", new { area = "" }), "Back to dashboard"),
+        _ => (Url.Action("Index", "Home", new { area = "" }), "Back to home")
+    };
+}
+
+@if (back.url is not null)
+{
+    <div class="page-return">
+        <a href="@back.url" class="page-return-link">
+            <span class="page-return-arrow" aria-hidden="true">←</span>
+            <span>@back.label</span>
+        </a>
+    </div>
+}
